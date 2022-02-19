@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+		<#include "/header.html">
+    <!-- 加载 Select2 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js"></script>
+
+</head>
+<body>
+<div id="rrapp" v-cloak>
+    <div v-show="showList">
+        <div class="grid-btn">
+            <div class="form-group col-sm-2">
+                <select class="form-control" id="id_select2_demo1">
+                    <option value="">--请选择一个类别--</option>
+                    <option value="1">理工</option>
+                    <option value="2">文史</option>
+                </select>
+
+            </div>
+            <div class="form-group col-sm-2">
+                <select class="form-control" id="id_select2_demo2">
+                    <option value="">--请选择一个批次--</option>
+                    <option value="1"> 提前批 </option>
+                    <option value="2"> 国家专项 </option>
+                    <option value="3"> 地方专项 </option>
+                    <option value="4"> 一本 </option>
+                    <option value="5"> 一本预科 </option>
+                    <option value="6"> 二本 </option>
+                    <option value="7"> 二本预科 </option>
+                    <option value="8"> 提前高职 </option>
+                    <option value="9"> 专科 </option>
+                </select>
+            </div>
+            <div class="form-group col-sm-2">
+                <input type="text" class="form-control" placeholder="高考分数">
+            </div>
+            <div class="form-group col-sm-2">
+                <input type="text" class="form-control" placeholder="考生位次">
+            </div>
+            <div class="form-group col-sm-2">
+                <input type="text" class="form-control" placeholder="向往城市">
+            </div>
+            <a class="btn btn-default" @click="query">查询</a>
+			<#if shiro.hasPermission("sys:college:save")>
+            <a class="btn btn-primary" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>
+			</#if>
+			<#if shiro.hasPermission("sys:college:update")>
+            <a class="btn btn-primary" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+			</#if>
+			<#if shiro.hasPermission("sys:college:delete")>
+            <a class="btn btn-primary" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>
+			</#if>
+        </div>
+        <table id="jqGrid"></table>
+        <div id="jqGridPager"></div>
+    </div>
+
+    <div v-show="!showList" class="panel panel-default">
+        <div class="panel-heading">{{title}}</div>
+        <form class="form-horizontal">
+														                    <div class="form-group">
+                        <div class="col-sm-2 control-label">院校代码</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="college.code" placeholder="院校代码"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">院校名称</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="college.name" placeholder="院校名称"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">计划数量</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="college.planCount" placeholder="计划数量"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">院校要求投档比例(%)</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="college.ratio" placeholder="院校要求投档比例(%)"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">投档数</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="college.count" placeholder="投档数"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">最高分</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="college.highestScore" placeholder="最高分"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">最高位次</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="college.highestLocant" placeholder="最高位次"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">最低分</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="college.lowestScore" placeholder="最低分"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">最低档次</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="college.lowestLocant" placeholder="最低档次"/>
+                        </div>
+                    </div>
+							            <div class="form-group">
+                <div class="col-sm-2 control-label"></div>
+                <input type="button" class="btn btn-primary" id="btnSaveOrUpdate" data-loading-text="保存中..." @click="saveOrUpdate" value="确定"/>
+                &nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="${request.contextPath}/statics/js/modules/sys/college.js?_${.now?long}"></script>
+<script>
+    var selectorx = $('#id_select2_demo1').select2();
+    var selectorx = $('#id_select2_demo2').select2();
+</script>
+</body>
+</html>
