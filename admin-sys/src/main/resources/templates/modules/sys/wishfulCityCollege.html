@@ -41,7 +41,7 @@
                 <input type="text" class="form-control" placeholder="考生位次">
             </div>
             <div class="form-group col-sm-2">
-                <input type="text" class="form-control" placeholder="向往城市">
+                <input type="text" class="form-control" v-model="q.city" @keyup.enter="query" placeholder="向往城市">
             </div>
             <a class="btn btn-default" @click="query">查询</a>
 			<#if shiro.hasPermission("sys:college:save")>

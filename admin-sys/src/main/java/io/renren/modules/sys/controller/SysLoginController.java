@@ -66,8 +66,8 @@ public class SysLoginController {
 		
 		try{
 			Subject subject = ShiroUtils.getSubject();
-			//UsernamePasswordToken token = new UsernamePasswordToken("business", "12345678");
-			UsernamePasswordToken token = new UsernamePasswordToken("admin", "admin");
+			UsernamePasswordToken token = new UsernamePasswordToken("business", "12345678");
+			//UsernamePasswordToken token = new UsernamePasswordToken("admin", "admin");
 			subject.login(token);
 		}catch (UnknownAccountException e) {
 			return R.error(e.getMessage());
