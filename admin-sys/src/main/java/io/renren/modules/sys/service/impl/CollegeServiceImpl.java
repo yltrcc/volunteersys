@@ -30,6 +30,8 @@ public class CollegeServiceImpl extends ServiceImpl<CollegeDao, CollegeEntity> i
                 new QueryWrapper<CollegeEntity>()
                         .eq(StringUtils.isNotBlank(name),"name", name)
                         .like(StringUtils.isNotBlank(city),"name", city)
+                        .le(StringUtils.isNotBlank(score), "lowest_score", score)
+                        .ge(StringUtils.isNotBlank(locant), "lowest_locant", locant)
         );
 
         return new PageUtils(page);
